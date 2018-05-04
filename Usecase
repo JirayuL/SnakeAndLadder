@@ -1,0 +1,9 @@
+1. Two players start the game.they place their pieces on the first
+   square of the board.
+2. The game decides which one is the current player.
+3. Current player rolls a die.
+4. Current player moves his piece by the value of die face.
+5. If the piece lands on snake or ladder , set the piece position 
+   to the opposite end of the snake/ladder.
+6. If the piece lands on the goal square, then the current player 
+   win, else change the current player then repeat step (3.)
