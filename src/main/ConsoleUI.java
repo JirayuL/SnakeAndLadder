@@ -1,5 +1,7 @@
-package game;
+package main;
 import java.util.Scanner;
+
+import game.Game;
 
 public class ConsoleUI {
 
