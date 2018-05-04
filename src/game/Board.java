@@ -67,6 +67,7 @@ public class Board {
 
 	/**
 	 * Get size of the board.
+	 * 
 	 * @return size of the board
 	 */
 	public static int getSize() {

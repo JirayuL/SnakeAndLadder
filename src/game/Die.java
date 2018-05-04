@@ -29,6 +29,7 @@ public class Die {
 
 	/**
 	 * Get the face value of the dice
+	 * 
 	 * @return face of dice
 	 */
 	public int getFace() {
