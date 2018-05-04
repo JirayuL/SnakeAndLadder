@@ -49,6 +49,9 @@ public class SnakeAndLadderUI extends JFrame {
 		initComponent();
 	}
 
+	/**
+	 * Initialize all component of UI.
+	 */
 	private void initComponent() {
 		JPanel south = new JPanel();
 
@@ -117,10 +120,19 @@ public class SnakeAndLadderUI extends JFrame {
 		this.pack();
 	}
 
+	/**
+	 * Set the visibility to true
+	 */
 	public void run() {
 		this.setVisible(true);
 	}
 
+	/**
+	 * JPanel that want to paint.
+	 * 
+	 * @author Jirayu Laungwilawan
+	 *
+	 */
 	private class BoardPanel extends JPanel {
 		/**
 		 * 
