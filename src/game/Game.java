@@ -13,6 +13,10 @@ public class Game {
 	private boolean ended;
 
 	public Game() {
+		reset();
+	}
+	
+	public void reset() {
 		players = new Player[2];
 		players[0] = new Player("P1");
 		players[1] = new Player("P2");

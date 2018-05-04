@@ -10,7 +10,6 @@ import java.awt.Graphics;
 import java.awt.Color;
 import javax.imageio.ImageIO;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -39,9 +38,7 @@ public class SnakeAndLadderUI extends JFrame {
 
 	private JLabel faceLabel;
 
-	private JLabel red;
-
-	private JLabel blue;
+	private JButton restartButton;
 
 	private Game game;
 
@@ -56,16 +53,6 @@ public class SnakeAndLadderUI extends JFrame {
 		JPanel south = new JPanel();
 
 		bgBoard = new BoardPanel();
-
-		// red = new JLabel(new ImageIcon("src/images/red.png"));
-		//
-		// blue = new JLabel(new ImageIcon("src/images/blue.png"));
-		//
-		// bgBoard.add(red, null);
-		// bgBoard.add(blue, null);
-		// // piece place at 15 15 size 30 30
-		// red.setBounds(15, 520, 30, 30);
-		// blue.setBounds(15, 520, 30, 30);
 
 		currentPlayerLabel = new JLabel("Current player:");
 
@@ -90,16 +77,30 @@ public class SnakeAndLadderUI extends JFrame {
 				System.out.println("roll: " + face);
 				if (game.ilegalMove(face)) {
 					int distance = game.getBoardSize() - game.currentPlayerPosition();
-					face = game.getBoardSize() - face - distance - game.currentPlayerPosition();
+
 				}
 				game.currentPlayerMovePiece(face);
 				System.out.println(game.currentPlayerName() + " is at " + (game.currentPlayerPosition() + 1));
 				if (game.getBoard().pieceIsAtGoal(game.currentPlayer().getPiece())) {
-
+					rollButton.setEnabled(false);
+					restartButton.setEnabled(true);
 				}
 				System.out.println("-----------------------------------------------");
 				bgBoard.repaint();
 				game.switchPlayer();
+			}
+		});
+
+		restartButton = new JButton("Restart");
+		restartButton.setEnabled(false);
+		restartButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				game.reset();
+				rollButton.setEnabled(true);
+				restartButton.setEnabled(false);
+				bgBoard.repaint();
 			}
 		});
 
@@ -108,6 +109,7 @@ public class SnakeAndLadderUI extends JFrame {
 		south.add(faceLabel);
 		south.add(numberOfFace);
 		south.add(rollButton);
+		south.add(restartButton);
 
 		this.add(bgBoard, BorderLayout.NORTH);
 		this.add(south, BorderLayout.SOUTH);
@@ -142,9 +144,7 @@ public class SnakeAndLadderUI extends JFrame {
 			g.drawImage(img, 0, 0, SIZE, SIZE, null);
 			for (Player player : game.getPlayers()) {
 				int index = game.getPlayerPosition(player);
-				// int index = 19;
-//				 for (int index = 0; index < 100; index++) {
-
+				// for (int index = 0; index < 100; index++) {
 				int x;
 				if ((index / 10) % 2 == 0) {
 					x = BLOCK_SIZE * (index % 10);
@@ -155,12 +155,16 @@ public class SnakeAndLadderUI extends JFrame {
 				}
 				if (player.getName().equals("P1")) {
 					g.setColor(Color.RED);
-				} else {
+				} else if (player.getName().equals("P2")) {
 					g.setColor(Color.BLUE);
+				} else if (player.getName().equals("P3")) {
+					g.setColor(Color.YELLOW);
+				} else if (player.getName().equals("P4")) {
+					g.setColor(Color.GREEN);
 				}
 				g.fillOval(x + 10, SIZE - (BLOCK_SIZE * ((index / 10) + 1)) + 10, BLOCK_SIZE / 2, BLOCK_SIZE / 2);
 				g.drawString(player.getName(), x + 10, SIZE - (BLOCK_SIZE * ((index / 10) + 1)) + 10);
-//				 }
+				// }
 
 				// System.out.println("x: " + x);
 				// System.out.println("y: " + (SIZE - (BLOCK_SIZE * ((index / 10) + 1))));
