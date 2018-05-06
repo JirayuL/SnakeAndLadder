@@ -20,17 +20,14 @@ public class Game {
 	 * Reset method that restart everything
 	 */
 	public void reset() {
-		players = new Player[2];
-		for (int i = 0; i < players.length; i++) {
-			players[i] = new Player("P" + (i + 1));
-		}
-
 		die = new Die();
 		board = new Board();
 		ended = false;
-
-		board.addPiece(players[0].getPiece(), 0);
-		board.addPiece(players[1].getPiece(), 0);
+		players = new Player[2];
+		for (int i = 0; i < players.length; i++) {
+			players[i] = new Player("P" + (i + 1));
+			board.addPiece(players[i].getPiece(), 0);
+		}
 	}
 
 	/**
@@ -157,7 +154,7 @@ public class Game {
 	 *            value of the dice rolled
 	 * @return true if the piece move out of board otherwise false.
 	 */
-	public boolean ilegalMove(int face) {
+	public boolean isPlayerMoveOverBoard(int face) {
 		return face + currentPlayerPosition() > board.getSize();
 	}
 
@@ -179,7 +176,7 @@ public class Game {
 
 			System.out.println("The die is rolled! Face is " + face);
 
-			if (ilegalMove(face)) {
+			if (isPlayerMoveOverBoard(face)) {
 				System.out.println("not legal");
 				face = board.getSize() - (board.getPiecePosition(currentPLayer.getPiece()) + face);
 			}

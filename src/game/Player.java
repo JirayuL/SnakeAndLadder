@@ -11,10 +11,25 @@ public class Player {
 	private String name;
 
 	private Piece piece;
+	
+	private boolean isFreeze;
 
 	public Player(String name) {
 		this.name = name;
 		this.piece = new Piece();
+		this.isFreeze = false;
+	}
+	
+	public boolean isFreeze() {
+		return isFreeze;
+	}
+	
+	public void freeze() {
+		this.isFreeze = true;
+	}
+	
+	public void unFreeze() {
+		this.isFreeze = false;
 	}
 
 	/**

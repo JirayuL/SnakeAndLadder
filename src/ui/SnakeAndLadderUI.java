@@ -15,9 +15,13 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.JOptionPane;
 
+import game.Board;
 import game.Game;
 import game.Player;
+import square.Square;
+import square.SquareType;
 
 public class SnakeAndLadderUI extends JFrame {
 
@@ -72,22 +76,57 @@ public class SnakeAndLadderUI extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				if (game.currentPlayer().isFreeze()) {
+					game.currentPlayer().unFreeze();
+					game.switchPlayer();
+				}
 				currentPlayer.setText(game.currentPlayerName());
+
 				System.out.println("Current: " + game.currentPlayerName());
+
 				System.out.println(game.currentPlayerName() + " is at " + (game.currentPlayerPosition() + 1));
+
 				int face = game.currentPlayerRollDice();
 				numberOfFace.setText(String.format("%d", face));
 				System.out.println("roll: " + face);
-				if (game.ilegalMove(face)) {
-					int distance = game.getBoardSize() - game.currentPlayerPosition();
 
+				if (game.isPlayerMoveOverBoard(face)) {
+					final int boardSize = game.getBoardSize();
+					face = boardSize - ((face + game.currentPlayerPosition()) % boardSize)
+							- game.currentPlayerPosition() - 1;
+					System.out.println("actual face: " + face);
 				}
 				game.currentPlayerMovePiece(face);
+				bgBoard.repaint();
 				System.out.println(game.currentPlayerName() + " is at " + (game.currentPlayerPosition() + 1));
-				if (game.getBoard().pieceIsAtGoal(game.currentPlayer().getPiece())) {
+//				 try {
+//				 Thread.sleep(500);
+//				 } catch (InterruptedException e1) {
+//				// e1.printStackTrace();
+//				 }
+				Board board = game.getBoard();
+				Square playerSquare = board.getPlayerSquare(game.currentPlayer().getPiece());
+				if (board.pieceIsAtGoal(game.currentPlayer().getPiece())) {
 					rollButton.setEnabled(false);
 					restartButton.setEnabled(true);
+					JOptionPane.showMessageDialog(null,
+	                        game.currentPlayerName() + " wins!");
+				} else if (playerSquare.getType() == SquareType.Freeze) {
+					game.currentPlayer().freeze();
+					System.out.println("Freeze");
+				} else if (playerSquare.getType() == SquareType.BackWard) {
+					game.currentPlayerMovePiece(-1);
+					System.out.println("BackWard");
+				} else if (playerSquare.getType() == SquareType.Ladder) {
+					System.out.println("Ladder: " + (playerSquare.getDestination() - game.currentPlayerPosition()));
+					game.currentPlayerMovePiece(playerSquare.getDestination() - game.currentPlayerPosition());
+				} else if (playerSquare.getType() == SquareType.Snake) {
+					System.out.println("Snake: " + (playerSquare.getDestination() - game.currentPlayerPosition()));
+					System.out.println("destination: " + playerSquare.getDestination());
+					System.out.println("position" + game.currentPlayerPosition());
+					game.currentPlayerMovePiece(playerSquare.getDestination() - game.currentPlayerPosition());
 				}
+				System.out.println(game.currentPlayerName() + " is at " + (game.currentPlayerPosition() + 1));
 				System.out.println("-----------------------------------------------");
 				bgBoard.repaint();
 				game.switchPlayer();
@@ -139,6 +178,8 @@ public class SnakeAndLadderUI extends JFrame {
 		 */
 		private static final long serialVersionUID = 1L;
 		private Image img;
+		private Image stop;
+		private Image back;
 		private static final int SIZE = 600;
 
 		public BoardPanel() {
@@ -146,6 +187,8 @@ public class SnakeAndLadderUI extends JFrame {
 			this.setPreferredSize(new Dimension(SIZE, SIZE));
 			try {
 				img = ImageIO.read(SnakeAndLadderUI.class.getResourceAsStream("/images/bg.jpg"));
+				stop = ImageIO.read(SnakeAndLadderUI.class.getResourceAsStream("/images/stop.png"));
+				back = ImageIO.read(SnakeAndLadderUI.class.getResourceAsStream("/images/back.png"));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
