@@ -11,8 +11,11 @@ public class Game {
 	private int currentPLayerIndex;
 
 	private boolean ended;
+	
+	private int playerAmount;
 
-	public Game() {
+	public Game(int playerAmount) {
+		this.playerAmount = playerAmount;
 		reset();
 	}
 
@@ -23,7 +26,7 @@ public class Game {
 		die = new Die();
 		board = new Board();
 		ended = false;
-		players = new Player[2];
+		players = new Player[playerAmount];
 		for (int i = 0; i < players.length; i++) {
 			players[i] = new Player("P" + (i + 1));
 			board.addPiece(players[i].getPiece(), 0);
@@ -37,6 +40,11 @@ public class Game {
 	 */
 	public Board getBoard() {
 		return board;
+	}
+	
+	public void setPlayers(int playerAmount) {
+		this.playerAmount = playerAmount;
+		reset();
 	}
 
 	/**
@@ -194,7 +202,7 @@ public class Game {
 	}
 
 	public static void main(String[] args) {
-		Game game = new Game();
+		Game game = new Game(2);
 		game.start();
 	}
 
