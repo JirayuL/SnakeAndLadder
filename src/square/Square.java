@@ -10,13 +10,36 @@ public class Square {
 	private List<Piece> pieces;
 
 	private int number;
+	private SquareType type;
+	private int destination;
 
 	private boolean goal;
 
 	public Square(int number) {
 		this.number = number;
+		this.type = SquareType.Square;
 		pieces = new ArrayList<Piece>();
 		goal = false;
+	}
+	
+	public Square(int number,int destination){
+		this.number = number;
+		this.type = SquareType.Square;
+		pieces = new ArrayList<Piece>();
+		this.destination = destination;
+		goal = false;
+	}
+	
+	public int getDestination() {
+		return destination;
+	}
+	
+	public void setType(SquareType type) {
+		this.type = type;
+	}
+	
+	public SquareType getType() {
+		return type;
 	}
 
 	public void setGoal(boolean goal) {
