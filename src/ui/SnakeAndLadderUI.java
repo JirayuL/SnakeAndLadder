@@ -167,7 +167,7 @@ public class SnakeAndLadderUI extends JFrame {
 	}
 
 	/**
-	 * JPanel that want to paint.
+	 * JPanel that use as a board to paint.
 	 * 
 	 * @author Jirayu Laungwilawan
 	 *
@@ -213,7 +213,7 @@ public class SnakeAndLadderUI extends JFrame {
 				} else if (player.getName().equals("P2")) {
 					g.setColor(Color.BLUE);
 				} else if (player.getName().equals("P3")) {
-					g.setColor(Color.YELLOW);
+					g.setColor(Color.ORANGE);
 				} else if (player.getName().equals("P4")) {
 					g.setColor(Color.GREEN);
 				}

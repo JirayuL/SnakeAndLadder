@@ -24,6 +24,9 @@ public class Board {
 		squares[squares.length - 1].setGoal(true);
 	}
 
+	/**
+	 * Initialize the square by their type.
+	 */
 	private void initSquare() {
 		initAbility();
 		for (int i = 0; i < squares.length; i++) {
