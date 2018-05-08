@@ -11,7 +11,7 @@ public class Player {
 	private String name;
 
 	private Piece piece;
-	
+
 	private boolean isFreeze;
 
 	public Player(String name) {
@@ -19,15 +19,27 @@ public class Player {
 		this.piece = new Piece();
 		this.isFreeze = false;
 	}
-	
+
+	/**
+	 * Check if the player freeze.
+	 * 
+	 * @return true if the player freeze otherwise false.
+	 */
 	public boolean isFreeze() {
 		return isFreeze;
 	}
-	
+
+	/**
+	 * Freeze the player
+	 */
 	public void freeze() {
 		this.isFreeze = true;
 	}
-	
+
+	/**
+	 * 
+	 * Unfreeze the player
+	 */
 	public void unFreeze() {
 		this.isFreeze = false;
 	}

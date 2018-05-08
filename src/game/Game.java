@@ -29,8 +29,11 @@ public class Game {
 		die = new Die();
 		board = new Board();
 		ended = false;
-		players = new Player[2];
+
+		
 		currentPLayerIndex = 0;
+		players = new Player[4];
+
 		for (int i = 0; i < players.length; i++) {
 			players[i] = new Player("P" + (i + 1));
 			board.addPiece(players[i].getPiece(), 0);
