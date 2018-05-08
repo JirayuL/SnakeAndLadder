@@ -34,10 +34,10 @@ public class ConsoleUI {
 		}
 	}
 
-	public static void main(String[] args) {
-		ConsoleUI ui = new ConsoleUI();
-		Game game = new Game();
-		ui.start(game);
-	}
+//	public static void main(String[] args) {
+//		ConsoleUI ui = new ConsoleUI();
+//		Game game = new Game();
+//		ui.start(game);
+//	}
 
 }

@@ -1,13 +1,13 @@
 package main;
 
-import game.Game;
-import ui.SnakeAndLadderUI;
+
+import ui.MainMenuUI;
+
 
 public class Main {
 
 	public static void main(String[] args) {
-		Game game = new Game();
-		SnakeAndLadderUI ui = new SnakeAndLadderUI(game);
+		MainMenuUI ui = new MainMenuUI();
 		ui.run();
 	}
 
