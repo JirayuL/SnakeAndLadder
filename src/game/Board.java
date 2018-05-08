@@ -24,6 +24,9 @@ public class Board {
 		squares[squares.length - 1].setGoal(true);
 	}
 
+	/**
+	 * Initialize the square by their type.
+	 */
 	private void initSquare() {
 		initAbility();
 		for (int i = 0; i < squares.length; i++) {
@@ -52,6 +55,9 @@ public class Board {
 	 *            is the position that want to move piece to.
 	 */
 	public void addPiece(Piece piece, int pos) {
+		if (pos > SIZE - 1) {
+			pos = SIZE - 1;
+		}
 		squares[pos].addPiece(piece);
 	}
 
