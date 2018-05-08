@@ -20,6 +20,7 @@ import javax.swing.JOptionPane;
 import game.Board;
 import game.Game;
 import game.Player;
+import game.Turn;
 import square.Square;
 import square.SquareType;
 
@@ -43,6 +44,8 @@ public class SnakeAndLadderUI extends JFrame {
 	private JLabel faceLabel;
 
 	private JButton restartButton;
+
+	private JButton replayButton;
 
 	private Game game;
 
@@ -99,18 +102,18 @@ public class SnakeAndLadderUI extends JFrame {
 				game.currentPlayerMovePiece(face);
 				bgBoard.repaint();
 				System.out.println(game.currentPlayerName() + " is at " + (game.currentPlayerPosition() + 1));
-//				 try {
-//				 Thread.sleep(500);
-//				 } catch (InterruptedException e1) {
-//				// e1.printStackTrace();
-//				 }
+				//				 try {
+				//				 Thread.sleep(500);
+				//				 } catch (InterruptedException e1) {
+				//				// e1.printStackTrace();
+				//				 }
 				Board board = game.getBoard();
 				Square playerSquare = board.getPlayerSquare(game.currentPlayer().getPiece());
 				if (board.pieceIsAtGoal(game.currentPlayer().getPiece())) {
 					rollButton.setEnabled(false);
 					restartButton.setEnabled(true);
 					JOptionPane.showMessageDialog(null,
-	                        game.currentPlayerName() + " wins!");
+							game.currentPlayerName() + " wins!");
 				} else if (playerSquare.getType() == SquareType.Freeze) {
 					game.currentPlayer().freeze();
 					System.out.println("Freeze");
@@ -128,6 +131,7 @@ public class SnakeAndLadderUI extends JFrame {
 				}
 				System.out.println(game.currentPlayerName() + " is at " + (game.currentPlayerPosition() + 1));
 				System.out.println("-----------------------------------------------");
+				game.addTurn(new Turn(game.currentPlayer(),face));
 				bgBoard.repaint();
 				game.switchPlayer();
 			}
@@ -146,11 +150,86 @@ public class SnakeAndLadderUI extends JFrame {
 			}
 		});
 
+		replayButton = new JButton("replay");
+		replayButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+
+				new Thread(new Runnable(){
+					public void run() {
+						for (Turn t : game.getTurns()) {
+							if (game.currentPlayer().isFreeze()) {
+								game.currentPlayer().unFreeze();
+								game.switchPlayer();
+							}
+							currentPlayer.setText(game.currentPlayerName());
+
+							System.out.println("Current: " + game.currentPlayerName());
+
+							System.out.println(game.currentPlayerName() + " is at " + (game.currentPlayerPosition() + 1));
+
+							int face = t.getDistance();
+							numberOfFace.setText(String.format("%d", face));
+							System.out.println("roll: " + face);
+
+							if (game.isPlayerMoveOverBoard(face)) {
+								final int boardSize = game.getBoardSize();
+								face = boardSize - ((face + game.currentPlayerPosition()) % boardSize)
+										- game.currentPlayerPosition() - 1;
+								System.out.println("actual face: " + face);
+							}
+							game.currentPlayerMovePiece(face);
+							bgBoard.repaint();
+							System.out.println(game.currentPlayerName() + " is at " + (game.currentPlayerPosition() + 1));
+							try {
+								Thread.sleep(500);
+							} catch (InterruptedException e1) {
+								e1.printStackTrace();
+							}
+							Board board = game.getBoard();
+							Square playerSquare = board.getPlayerSquare(game.currentPlayer().getPiece());
+							if (board.pieceIsAtGoal(game.currentPlayer().getPiece())) {
+								rollButton.setEnabled(false);
+								restartButton.setEnabled(true);
+								JOptionPane.showMessageDialog(null,
+										game.currentPlayerName() + " wins!");
+							} else if (playerSquare.getType() == SquareType.Freeze) {
+								game.currentPlayer().freeze();
+								System.out.println("Freeze");
+							} else if (playerSquare.getType() == SquareType.BackWard) {
+								game.currentPlayerMovePiece(-1);
+								System.out.println("BackWard");
+							} else if (playerSquare.getType() == SquareType.Ladder) {
+								System.out.println("Ladder: " + (playerSquare.getDestination() - game.currentPlayerPosition()));
+								game.currentPlayerMovePiece(playerSquare.getDestination() - game.currentPlayerPosition());
+							} else if (playerSquare.getType() == SquareType.Snake) {
+								System.out.println("Snake: " + (playerSquare.getDestination() - game.currentPlayerPosition()));
+								System.out.println("destination: " + playerSquare.getDestination());
+								System.out.println("position" + game.currentPlayerPosition());
+								game.currentPlayerMovePiece(playerSquare.getDestination() - game.currentPlayerPosition());
+							}
+							System.out.println(game.currentPlayerName() + " is at " + (game.currentPlayerPosition() + 1));
+							System.out.println("-----------------------------------------------");
+
+							bgBoard.repaint();
+
+							game.switchPlayer();
+						}
+					}
+
+				}).start();
+			}
+
+		});
+
 		south.add(currentPlayerLabel);
 		south.add(currentPlayer);
 		south.add(faceLabel);
 		south.add(numberOfFace);
 		south.add(rollButton);
+		south.add(replayButton);
 		south.add(restartButton);
 
 		this.add(bgBoard, BorderLayout.NORTH);

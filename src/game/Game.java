@@ -1,6 +1,11 @@
 package game;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Game {
+	
+	private List<Turn> turnls;
 
 	private Player[] players;
 
@@ -14,6 +19,7 @@ public class Game {
 
 	public Game() {
 		reset();
+		turnls = new ArrayList<Turn>();
 	}
 
 	/**
@@ -23,7 +29,11 @@ public class Game {
 		die = new Die();
 		board = new Board();
 		ended = false;
+
+		
+		currentPLayerIndex = 0;
 		players = new Player[4];
+
 		for (int i = 0; i < players.length; i++) {
 			players[i] = new Player("P" + (i + 1));
 			board.addPiece(players[i].getPiece(), 0);
@@ -191,6 +201,14 @@ public class Game {
 			}
 			switchPlayer();
 		}
+	}
+	
+	public void addTurn(Turn t) {
+		turnls.add(t);
+	}
+	
+	public List<Turn> getTurns() {
+		return turnls;
 	}
 
 	public static void main(String[] args) {
