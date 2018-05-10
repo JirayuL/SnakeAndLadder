@@ -27,6 +27,7 @@ import game.Game;
 import game.Player;
 import game.ReplayData;
 import game.ReplayPool;
+import game.State;
 import game.Turn;
 import square.Square;
 import square.SquareType;
@@ -55,9 +56,9 @@ public class SnakeAndLadderUI extends JFrame {
 	private JButton replayButton;
 
 	private Game game;
-	
+
 	private ReplayPool rplPool;
-	
+
 	private JComboBox<ReplayData> replaysBox;
 
 	private JButton saveReplayButton;
@@ -87,9 +88,9 @@ public class SnakeAndLadderUI extends JFrame {
 
 		numberOfFace = new JTextField(5);
 		numberOfFace.setEnabled(false);
-		
+
 		replaysBox = new JComboBox< ReplayData >();
-		
+
 		saveReplayButton = new JButton("SaveReplay");
 		saveReplayButton.addActionListener(new ActionListener() {
 
@@ -107,9 +108,9 @@ public class SnakeAndLadderUI extends JFrame {
 					replaysBox.addItem(rplpooliterator.next());
 				}
 			}
-			
+
 		});	
-		
+
 		rollButton = new JButton("roll");
 		rollButton.addActionListener(new ActionListener() {
 
@@ -150,6 +151,8 @@ public class SnakeAndLadderUI extends JFrame {
 					restartButton.setEnabled(true);
 					JOptionPane.showMessageDialog(null,
 							game.currentPlayerName() + " wins!");
+					game.setState(State.OVER);
+
 				} else if (playerSquare.getType() == SquareType.Freeze) {
 					game.currentPlayer().freeze();
 					System.out.println("Freeze");
@@ -191,68 +194,77 @@ public class SnakeAndLadderUI extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-
+				
 
 				new Thread(new Runnable(){
 					public void run() {
 						ReplayData replay = (ReplayData) replaysBox.getSelectedItem();
-						for (Turn t : replay.getList()) {
-							if (game.currentPlayer().isFreeze()) {
-								game.currentPlayer().unFreeze();
+						if (replay != null) {
+							if (game.getState() != State.RUNNING) {
+								game.reset();
+								rollButton.setEnabled(true);
+								restartButton.setEnabled(false);
+								bgBoard.repaint();
+							}
+							for (Turn t : replay.getList()) {
+								if (game.currentPlayer().isFreeze()) {
+									game.currentPlayer().unFreeze();
+									game.switchPlayer();
+								}
+								currentPlayer.setText(game.currentPlayerName());
+
+								System.out.println("Current: " + game.currentPlayerName());
+
+								System.out.println(game.currentPlayerName() + " is at " + (game.currentPlayerPosition() + 1));
+
+								int face = t.getDistance();
+								numberOfFace.setText(String.format("%d", face));
+								System.out.println("roll: " + face);
+
+								if (game.isPlayerMoveOverBoard(face)) {
+									final int boardSize = game.getBoardSize();
+									face = boardSize - ((face + game.currentPlayerPosition()) % boardSize)
+											- game.currentPlayerPosition() - 1;
+									System.out.println("actual face: " + face);
+								}
+								game.currentPlayerMovePiece(face);
+								bgBoard.repaint();
+								System.out.println(game.currentPlayerName() + " is at " + (game.currentPlayerPosition() + 1));
+								try {
+									Thread.sleep(500);
+								} catch (InterruptedException e1) {
+									e1.printStackTrace();
+								}
+								Board board = game.getBoard();
+								Square playerSquare = board.getPlayerSquare(game.currentPlayer().getPiece());
+								if (board.pieceIsAtGoal(game.currentPlayer().getPiece())) {
+									rollButton.setEnabled(false);
+									restartButton.setEnabled(true);
+									JOptionPane.showMessageDialog(null,
+											game.currentPlayerName() + " wins!");
+									game.setState(State.OVER);
+								} else if (playerSquare.getType() == SquareType.Freeze) {
+									game.currentPlayer().freeze();
+									System.out.println("Freeze");
+								} else if (playerSquare.getType() == SquareType.BackWard) {
+									game.currentPlayerMovePiece(-1);
+									System.out.println("BackWard");
+								} else if (playerSquare.getType() == SquareType.Ladder) {
+									System.out.println("Ladder: " + (playerSquare.getDestination() - game.currentPlayerPosition()));
+									game.currentPlayerMovePiece(playerSquare.getDestination() - game.currentPlayerPosition());
+								} else if (playerSquare.getType() == SquareType.Snake) {
+									System.out.println("Snake: " + (playerSquare.getDestination() - game.currentPlayerPosition()));
+									System.out.println("destination: " + playerSquare.getDestination());
+									System.out.println("position" + game.currentPlayerPosition());
+									game.currentPlayerMovePiece(playerSquare.getDestination() - game.currentPlayerPosition());
+								}
+								System.out.println(game.currentPlayerName() + " is at " + (game.currentPlayerPosition() + 1));
+								System.out.println("-----------------------------------------------");
+
+								bgBoard.repaint();
+
 								game.switchPlayer();
 							}
-							currentPlayer.setText(game.currentPlayerName());
-
-							System.out.println("Current: " + game.currentPlayerName());
-
-							System.out.println(game.currentPlayerName() + " is at " + (game.currentPlayerPosition() + 1));
-
-							int face = t.getDistance();
-							numberOfFace.setText(String.format("%d", face));
-							System.out.println("roll: " + face);
-
-							if (game.isPlayerMoveOverBoard(face)) {
-								final int boardSize = game.getBoardSize();
-								face = boardSize - ((face + game.currentPlayerPosition()) % boardSize)
-										- game.currentPlayerPosition() - 1;
-								System.out.println("actual face: " + face);
-							}
-							game.currentPlayerMovePiece(face);
-							bgBoard.repaint();
-							System.out.println(game.currentPlayerName() + " is at " + (game.currentPlayerPosition() + 1));
-							try {
-								Thread.sleep(500);
-							} catch (InterruptedException e1) {
-								e1.printStackTrace();
-							}
-							Board board = game.getBoard();
-							Square playerSquare = board.getPlayerSquare(game.currentPlayer().getPiece());
-							if (board.pieceIsAtGoal(game.currentPlayer().getPiece())) {
-								rollButton.setEnabled(false);
-								restartButton.setEnabled(true);
-								JOptionPane.showMessageDialog(null,
-										game.currentPlayerName() + " wins!");
-							} else if (playerSquare.getType() == SquareType.Freeze) {
-								game.currentPlayer().freeze();
-								System.out.println("Freeze");
-							} else if (playerSquare.getType() == SquareType.BackWard) {
-								game.currentPlayerMovePiece(-1);
-								System.out.println("BackWard");
-							} else if (playerSquare.getType() == SquareType.Ladder) {
-								System.out.println("Ladder: " + (playerSquare.getDestination() - game.currentPlayerPosition()));
-								game.currentPlayerMovePiece(playerSquare.getDestination() - game.currentPlayerPosition());
-							} else if (playerSquare.getType() == SquareType.Snake) {
-								System.out.println("Snake: " + (playerSquare.getDestination() - game.currentPlayerPosition()));
-								System.out.println("destination: " + playerSquare.getDestination());
-								System.out.println("position" + game.currentPlayerPosition());
-								game.currentPlayerMovePiece(playerSquare.getDestination() - game.currentPlayerPosition());
-							}
-							System.out.println(game.currentPlayerName() + " is at " + (game.currentPlayerPosition() + 1));
-							System.out.println("-----------------------------------------------");
-
-							bgBoard.repaint();
-
-							game.switchPlayer();
 						}
 					}
 
@@ -261,7 +273,7 @@ public class SnakeAndLadderUI extends JFrame {
 
 		});
 		JPanel north = new JPanel();
-		
+
 
 		north.add(currentPlayerLabel);
 		north.add(currentPlayer);
@@ -272,7 +284,7 @@ public class SnakeAndLadderUI extends JFrame {
 		south.add(replaysBox);
 		south.add(replayButton);
 		south.add(restartButton);
-		
+
 		add(north,BorderLayout.NORTH);
 		this.add(bgBoard, BorderLayout.CENTER);
 		this.add(south, BorderLayout.SOUTH);

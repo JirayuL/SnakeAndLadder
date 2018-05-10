@@ -17,17 +17,29 @@ public class Game {
 
 	private boolean ended;
 	
+	private State state = State.OVER;
+	
 	private int playerAmount;
 
 	public Game(int playerAmount) {
 		this.playerAmount = playerAmount;
 		reset();
 	}
+	
+	public State getState() {
+		return state;
+	}
+	
+	public void setState(State s) {
+		state = s;
+	}
 
 	/**
 	 * Reset method that restart everything
 	 */
 	public void reset() {
+		
+		state = State.RUNNING;
 		turnls = new ArrayList<Turn>();
 		die = new Die();
 		board = new Board();

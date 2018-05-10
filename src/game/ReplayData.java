@@ -3,8 +3,8 @@ package game;
 import java.util.List;
 
 public class ReplayData {
-	String name;
-	List<Turn> turnls;
+	private String name;
+	private List<Turn> turnls;
 	
 	public ReplayData(String name,List<Turn> turnls){
 		this.name = name;
