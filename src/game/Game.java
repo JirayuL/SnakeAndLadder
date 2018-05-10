@@ -22,13 +22,13 @@ public class Game {
 	public Game(int playerAmount) {
 		this.playerAmount = playerAmount;
 		reset();
-		turnls = new ArrayList<Turn>();
 	}
 
 	/**
 	 * Reset method that restart everything
 	 */
 	public void reset() {
+		turnls = new ArrayList<Turn>();
 		die = new Die();
 		board = new Board();
 		ended = false;

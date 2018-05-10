@@ -5,12 +5,17 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.awt.Image;
 import java.awt.Graphics;
 import java.awt.Color;
 import javax.imageio.ImageIO;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -20,6 +25,8 @@ import javax.swing.JOptionPane;
 import game.Board;
 import game.Game;
 import game.Player;
+import game.ReplayData;
+import game.ReplayPool;
 import game.Turn;
 import square.Square;
 import square.SquareType;
@@ -48,9 +55,16 @@ public class SnakeAndLadderUI extends JFrame {
 	private JButton replayButton;
 
 	private Game game;
+	
+	private ReplayPool rplPool;
+	
+	private JComboBox<ReplayData> replaysBox;
+
+	private JButton saveReplayButton;
 
 	public SnakeAndLadderUI(Game game) {
 		this.game = game;
+		rplPool = new ReplayPool();
 		new JFrame("Snake and Ladder");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		initComponent();
@@ -73,7 +87,29 @@ public class SnakeAndLadderUI extends JFrame {
 
 		numberOfFace = new JTextField(5);
 		numberOfFace.setEnabled(false);
+		
+		replaysBox = new JComboBox< ReplayData >();
+		
+		saveReplayButton = new JButton("SaveReplay");
+		saveReplayButton.addActionListener(new ActionListener() {
 
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				LocalTime now = LocalTime.now();
+				List<Turn> temp = new ArrayList<Turn>();
+				for (Turn t : game.getTurns()) {
+					temp.add(t);
+				}
+				rplPool.addDatas(new ReplayData(now.toString(),temp));
+				replaysBox.removeAllItems();
+				Iterator<ReplayData> rplpooliterator = rplPool.iterator();
+				while(rplpooliterator.hasNext()) {
+					replaysBox.addItem(rplpooliterator.next());
+				}
+			}
+			
+		});	
+		
 		rollButton = new JButton("roll");
 		rollButton.addActionListener(new ActionListener() {
 
@@ -150,7 +186,7 @@ public class SnakeAndLadderUI extends JFrame {
 			}
 		});
 
-		replayButton = new JButton("replay");
+		replayButton = new JButton("Run Replay");
 		replayButton.addActionListener(new ActionListener() {
 
 			@Override
@@ -159,7 +195,8 @@ public class SnakeAndLadderUI extends JFrame {
 
 				new Thread(new Runnable(){
 					public void run() {
-						for (Turn t : game.getTurns()) {
+						ReplayData replay = (ReplayData) replaysBox.getSelectedItem();
+						for (Turn t : replay.getList()) {
 							if (game.currentPlayer().isFreeze()) {
 								game.currentPlayer().unFreeze();
 								game.switchPlayer();
@@ -223,16 +260,21 @@ public class SnakeAndLadderUI extends JFrame {
 			}
 
 		});
+		JPanel north = new JPanel();
+		
 
-		south.add(currentPlayerLabel);
-		south.add(currentPlayer);
-		south.add(faceLabel);
-		south.add(numberOfFace);
+		north.add(currentPlayerLabel);
+		north.add(currentPlayer);
+		north.add(faceLabel);
+		north.add(numberOfFace);
 		south.add(rollButton);
+		south.add(saveReplayButton);
+		south.add(replaysBox);
 		south.add(replayButton);
 		south.add(restartButton);
-
-		this.add(bgBoard, BorderLayout.NORTH);
+		
+		add(north,BorderLayout.NORTH);
+		this.add(bgBoard, BorderLayout.CENTER);
 		this.add(south, BorderLayout.SOUTH);
 
 		this.pack();
