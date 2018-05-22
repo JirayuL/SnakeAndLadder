@@ -35,7 +35,7 @@ The project must be developed in Java.
 
 - [x] Domain Model
 - [x] UML Class Diagram
-- [ ] Source code (Runnable JAR file or APK.)
+- [x] Source code (Runnable JAR file or APK.)
 
 ## Grading
 
