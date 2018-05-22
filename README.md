@@ -51,3 +51,8 @@ The project must be developed in Java.
 ## Warning
 
 The project is complicated enough to guarantee that all of your codes will be differ. I will not tolorate any plagiarisms.
+
+## Member
+- Jirayu   Laungwilawan 5910546635
+- Theeruth Borisuth     5910545701
+- Wuttipat Nilsiri      5910545850
