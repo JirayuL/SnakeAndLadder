@@ -13,7 +13,7 @@ import javax.swing.JPanel;
 import game.Game;
 /**
  * This class will launch the main menu of the Snake and Ladder.
- * @author user
+ * @author Theeruth Borisuth
  *
  */
 public class MainMenuUI extends JFrame {
